@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <style>
+        .data-viewer {
+            font-family: "courier new", arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .focus {
+            background-color: #00AEAE;
+            color: #FFFFFF;
+        }
+    </style>
+
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/echarts-gl.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/taskModelManagementCtrl.js"></script>
+    <title>建模任务管理</title>
+</head>
+<body ng-controller="taskModelManagementCtrl">
+<div class="container-fluid">
+    <h3 class="page-header" style="">建模任务管理
+        <a type="button"
+           class="btn btn-info btn-sm btn-block"
+           style="float: right; width: 10%"
+           href="ana-task-create-manage.html">任务管理
+        </a>
+    </h3>
+
+    <!-- 任务列表 -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" >
+                <div class="panel-heading">建模任务列表</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" placeholder="任务ID" ng-model="searchParam"
+                                   style="width: 50%;display: inline;padding-bottom: 10px">
+                            <button class="btn btn-info search-btn" ng-click="searchTask()">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-md-offset-2">
+
+                            <button type="button" class="btn btn-sm btn-default btn-block"
+                                    ng-click="getAllTasks()" >
+                                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12" style="max-height:450px;overflow:auto">
+                            <table
+                                    class="table table-bordered table-striped table-condensed table-hover"
+                                    ng-init="getAllTasks()">
+                                <thead>
+                                <tr class="default" style="background-color: #00a4e7;color:#fff;font-weight:normal">
+                                    <th style="font-weight:normal">任务ID</th>
+                                    <th style="font-weight:normal">模型名称</th>
+                                    <th style="font-weight:normal">创建时间</th>
+                                    <th style="font-weight:normal">是否完成</th>
+                                    <th style="font-weight:normal">完成时间</th>
+                                    <th style="font-weight:normal">执行进度</th>
+                                    <th colspan="2" style="font-weight:normal">操 作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="task in modelBuildRecordList" ng-click="showTaskInfo(task)">
+                                    <td ng-style='{"background-color": task.modelUid==currentTask.modelUid? "#00a4e7": ""}'>{{task.modelUid}}</td>
+                                    <td>{{task.modelName}}</td>
+                                    <td>{{task.startTime | myDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td>{{task.buildingProcess != 1 ? "否" : "是"}}</td>
+                                    <td>{{task.endTime | myDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td>{{(task.buildingProcess*100) | number: 2}} %</td>
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-danger btn-xs btn-block"
+                                                ng-click="delModel(task)">删 除
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">任务信息</div>
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="form-group form-group-sm" >
+
+                            <label for="currentTask-taskId"
+                                   class="col-sm-2 control-label">基础信息</label>
+
+                            <div class="col-md-3">
+                                <div class=" input-group">
+                                    <span class="input-group-addon">任务ID</span>
+                                    <input type="text" class="form-control" id="currentTask-taskId"
+                                           placeholder="任务ID" ng-model="currentTask.modelUid" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class=" input-group">
+                                    <span class="input-group-addon">模型名称</span>
+                                    <input type="text" class="form-control" id="currentTask-name"
+                                           placeholder="模型名称" ng-model="currentTask.modelName" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class=" input-group">
+                                    <span class="input-group-addon">基础模型ID</span>
+                                    <input type="text" class="form-control"
+                                           ng-model="currentTask.basicModelId"
+                                           aria-describedby="currentTask-datasetPath" placeholder="基础模型ID号" readonly>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-2 control-label">任务描述</label>
+                            <div class="col-md-9">
+                                <textarea id="currentTask-description1" class="form-control"
+                                          rows="3" placeholder="该建模的描述信息"
+                                          ng-model="currentTask.modelDescription" readonly></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-2 control-label">基础模型信息</label>
+                            <div class="col-md-9">
+									<textarea class="form-control"
+                                              rows="5" placeholder="基础模型信息"
+                                              ng-model="basicModelInfo" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label for="currentTask-description1"
+                                   class="col-sm-2 control-label">模型参数</label>
+                            <div class=" col-md-9">
+									<textarea class="form-control"
+                                              rows="5" placeholder="建模使用的参数构成"
+                                              ng-model="modelConfigInfo" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                            </div>
+
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <div class=" col-md-11">
+                                <button type="button" class="btn btn-sm btn-info" style="float: right;margin-left: 5px"
+                                        ng-click="predictModel(currentTask)" >
+                                    模型预测
+                                </button>
+                                <button type="button" class="btn btn-sm btn-info" style="float: right"
+                                        ng-click="getCurrentProcess(currentTask)" >
+                                    查看建模进程
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

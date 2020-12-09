@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/echarts-gl.min.js"></script>
+    <script src="js/echarts-wordcloud.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/loadModelApiCtrl.js"></script>
+    <title>模型复用</title>
+</head>
+<body ng-controller="loadModelApiCtrl">
+<div class="container-fluid">
+    <div class="" style="height: 20px"></div>
+    <span class="btn-info btn-sm " style="display: inline-block"  disabled="">任务管理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block">数据集
+    </span>
+    <span class="glyphicon glyphicon-chevron-right"  style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据预处理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据建模
+    </span>
+    <span class="glyphicon glyphicon-chevron-right"></span>
+    <span class="btn-info btn-sm " style="background-color: #00a4e7;display: inline-block" disabled="">预测分析
+    </span>
+    <h3 class="page-header" style="margin-top: 10px"></h3>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">模型复用（{{taskId}}）</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label style="margin-top: 5px">选择模型</label>
+                        </div>
+                        <div class="col-md-3">
+                            <select ng-init="getModelList()" id="createModelSelect"
+                                    class="form-control" style="width: 100%;">
+                                <option ng-repeat="createModel in createModelList" value="{{createModel.modelDescription}}"
+                                >{{createModel.modelDescription}}
+                                </option>
+                            </select>
+
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button"
+                                    class="btn btn-success btn-sm"
+                                    ng-click="preLoadModel()">
+                                <span class="glyphicon glyphicon-log-in"></span> 加载
+                            </button>
+                            <button type="button"
+                                    class="btn btn-info btn-sm"
+                                    ng-click="stopModel()">
+                                <span class="glyphicon glyphicon-repeat"></span> 清空
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <label>配置UUID:<font color="blue">{{currentModel.modelUid}}</font></label><br>
+                            <label>模型名称:<font color="blue">{{currentModel.modelName}}</font></label>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="inputShow">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default" >
+                                <div class="panel-heading">模型预测</div>
+                                <div class="panel-body">
+                                    <div class="col-md-6">
+                                        <label style="margin-top: 5px">输入</label>
+                                        <textarea class="form-control"
+                                                  rows="6" placeholder="输入待分类的句子"
+                                                  ng-model="inputSentences"
+                                                  style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label style="margin-top: 5px">预测输出标签</label>
+                                        <textarea class="form-control"
+                                                  rows="6" placeholder="输出分类标签"
+                                                  ng-model="labelStr" readonly
+                                                  style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                    </div>
+                                    <div class="col-md-2" style="margin-top: 5px">
+                                        <button type="button"
+                                                class="btn btn-success btn-sm"
+                                                ng-disabled="!loadReady"
+                                                ng-click="startPredict()">
+                                            <span class="glyphicon glyphicon-log-in"></span> 加载
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="textClassifyTaskShow">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default" >
+                                <div class="panel-heading"><font color="blue">文本分类任务</font>预测结果详情</div>
+                                <div class="panel-body">
+                                    <div class="col-md-12">
+                                        <div class="col-md-1">
+                                            <label style="margin-top: 5px">用例编号</label>
+                                        </div>
+                                        <div class="col-md-3" style="float: left">
+                                            <select ng-init="getInputSentences()" id="inputSentences" ng-model="inputSentence"
+                                                    class="form-control" style="width: 100%;" ng-change="selectInputSentence()">
+                                                <option ng-repeat="indexs in inputSentencesIndex" value="{{indexs}}"
+                                                >{{indexs}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                        <textarea class="form-control"
+                                                  rows="2" placeholder="待预测用例"
+                                                  ng-model="selectSentence" readonly
+                                                  style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" style="margin-top: 10px">
+                                        <div class="col-md-6">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    预测标签概率分布
+                                                </div>
+                                                <div id="predictLabelsPie" style="width: 100%;height:400px;margin-top: 10px" ></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    预测标签详情
+                                                </div>
+                                                <div id="predictLabelsWords" style="width: 100%;height:400px;margin-top: 10px" ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="nerTaskShow">
+                        <div class="col-sm-10">
+                            <div class="panel panel-default" >
+                                <div class="panel-heading"><font color="blue">NER任务</font>预测结果详情</div>
+                                <div class="panel-body">
+                                    <div class="col-md-12">
+                                        <label>标签颜色分类:</label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>LOC:<font color="blue">蓝色</font></label>
+                                        <label>ORG:<font color="red">红色</font></label>
+                                        <label>PER:<font color="green">绿色</font></label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>解析测试原文:</label>
+                                    </div>
+                                    <div ng-repeat="num in sentenceCount" class="col-md-12">
+                                        <label ng-repeat="index in indexList[num]"><font color={{colorList[num][index]}}>{{tokenList[num][index]}}</font></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="reTaskShow">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default" >
+                                <div class="panel-heading"><font color="blue">RE(关系抽取)任务:数据集：{{dataSetName}}</font>预测结果详情</div>
+                                <div class="panel-body">
+                                    <div style="margin-left: 10px">
+                                        <div class="row" style="margin-top: 10px">
+                                            <div class="col-sm-4 col-md-2">
+                                                <label style="margin-top: 5px">测试数据集上传</label>
+                                            </div>
+                                            <div class="col-sm-4 col-md-2">
+                                                <input type="text" class="filetext form-control" readonly style="height: 30px"/>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <button class="change_btn btn btn-group-sm btn-success">
+                                                    <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" style="margin-top: 10px">
+                                        <form id="form1" method="post" target="frame1" action="uploadtest" enctype="multipart/form-data">
+                                            <input type="text" class="form-control" ng-model="dataName" name="datasetname" style="display:none;" id="dataSetName"/>
+                                            <div class="col-md-3">
+                                                <button class="btn btn-success btn-sm" onclick="upload()"ng-click="showKnowledgeGraph()" >
+                                                    <span class="glyphicon glyphicon-send"></span> 分析
+                                                </button>
+                                            </div>
+                                            <input type="file" name="file" class="filess"  style="display:none;">
+                                        </form>
+                                        <iframe name="frame1" frameborder="0" height="40" style="display:none;"></iframe>
+                                        <script>
+                                            function upload() {
+                                                $("#form1").submit();
+                                                var t = setInterval(function() {
+                                                    //获取iframe标签里body元素里的文字。即服务器响应过来的"上传成功"或"上传失败"
+                                                    var word = $("iframe[name='frame1']").contents().find("body").text();
+                                                    if (word != "") {
+                                                        //alert(word);
+                                                        Swal.fire({
+                                                            title: word,
+                                                            timer: 2000
+                                                        });//弹窗提示是否上传成功
+                                                        clearInterval(t);   //清除定时器
+                                                    }
+                                                }, 1000);
+                                            }
+                                            $(".change_btn").click(function () { $(".filess").click(); });
+                                            $('.filess').change(function(){
+                                                var file=$('.filess').val();
+                                                console.log(file.substring(12,file.length));
+                                                $('.filetext').val(file.substring(12,file.length));
+                                            })
+                                        </script>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <input type="text" class="form-control" placeholder="搜索实体" ng-model="searchEntity"
+                                                   style="width: 50%;display: inline;padding-bottom: 10px">
+                                            <button class="btn btn-info search-btn" ng-click="searchDB()">
+                                                <span class="glyphicon glyphicon-search"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top: 20px">
+                                        <div class="col-md-8" style="margin-top: 10px">
+
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    知识图谱
+                                                </div>
+                                                <div id="knowledgeGraph"  style="height:700px;width:100%;" ></div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4" style="margin-top: 10px">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">
+                                                    图谱详情
+                                                </div>
+                                                <textarea class="form-control"
+                                                          rows="20" placeholder="图谱详情"
+                                                          ng-model="graphInfo" readonly
+                                                          style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                            </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

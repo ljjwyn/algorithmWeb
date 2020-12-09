@@ -1,0 +1,222 @@
+/* Base structure */
+
+/* Move down content because we have a fixed navbar that is 50px tall */
+body, button, input, select, textarea, h1, h2, h3, h4, h5, h6 {
+	/*padding-top: 25px;*/
+	font-family: Arial, sans-serif, Hei, Microsoft YaHei, Tahoma, Helvetica;
+	font-size: 13px;
+	/* background-color: #f3f5f5; */
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-size: 20px;
+}
+
+button, input, select, textarea, p {
+	font-size: 13px;
+}
+
+/* Global add-ons */
+.sub-header {
+	padding-bottom: 10px;
+	border-bottom: 1px solid #eee;
+}
+
+.navbar {
+	font-size: 13px;
+}
+
+/*
+ * Top navigation
+ * Hide default border to remove 1px line.
+ */
+.navbar-fixed-top {
+	border: 0;
+}
+
+/*
+.navbar-default {
+	background-color: #409dfc;
+}
+
+.navbar-header {
+	background-color: #3078c1;
+	padding-left: 10px;
+}
+
+.navbar-brand {
+	color: #ffffff !important;
+
+}*/
+
+/*
+ * Sidebar
+ */
+
+/* Hide for mobile, show later */
+.sidebar {
+	display: none;
+}
+
+@media ( min-width : 768px) {
+	.sidebar {
+		position: fixed;
+		top: 51px;
+		bottom: 0;
+		left: 0;
+		z-index: 1000;
+		display: block;
+		padding: 10px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		background-color: #2f323a;
+		border-right: 1px solid #eee;
+	}
+}
+
+/* Sidebar navigation */
+.nav-sidebar {
+	margin-right: -21px; /* 20px padding + 1px border */
+	margin-bottom: 20px;
+	margin-left: -20px;
+}
+
+.nav-sidebar>li>a {
+	padding-right: 20px;
+	padding-left: 20px;
+	color: #a9b7c3;
+}
+
+.nav-sidebar>.active>a, .nav-sidebar>.active>a:hover, .nav-sidebar>.active>a:focus
+	{
+	color: #fff;
+	background-color: #428bca;
+}
+
+/* Hide for mobile, show later */
+.second-sidebar {
+	display: none;
+}
+
+@media ( min-width : 768px) {
+	.second-sidebar {
+		position: fixed;
+		top: 51px;
+		bottom: 0;
+		left: 0;
+		z-index: 1000;
+		display: block;
+		padding: 15px;
+		overflow-x: hidden;
+		overflow-y: auto;
+		background-color: #f5f5f5;
+		border-right: 1px solid #eee;
+	}
+}
+
+/* Second sidebar navigation */
+.second-nav-sidebar {
+	margin-right: -21px; /* 20px padding + 1px border */
+	margin-bottom: 20px;
+	margin-left: -20px;
+}
+
+.second-nav-sidebar>li>a {
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+.second-nav-sidebar>.active>a, .second-nav-sidebar>.active>a:hover,
+	.second-nav-sidebar>.active>a:focus {
+	color: #fff;
+	background-color: #3eb7b5;
+}
+
+/*
+ * Main content
+ */
+.main {
+	padding: 20px;
+}
+
+@media ( min-width : 768px) {
+	.main {
+		padding-right: 40px;
+		padding-left: 40px;
+	}
+}
+
+.main .page-header {
+	margin-top: 0;
+}
+
+/*
+ * Placeholder dashboard ideas
+ */
+.placeholders {
+	margin-bottom: 30px;
+	text-align: center;
+}
+
+.placeholders h4 {
+	margin-bottom: 0;
+}
+
+.placeholder {
+	margin-bottom: 20px;
+}
+
+.placeholder img {
+	display: inline-block;
+	border-radius: 50%;
+}
+
+/*
+ * 固定左侧Sidebar宽度
+ */
+.col-fixed-160 {
+	width: 160px;
+	position: fixed;
+	height: 100%;
+	z-index: 1;
+}
+
+.col-fixed-140 {
+	margin-left: 160px;
+	width: 140px;
+	position: fixed;
+	height: 100%;
+	z-index: 1;
+}
+
+.col-offset-180 {
+	padding-left: 180px;
+	z-index: 0;
+}
+
+.col-offset-160 {
+	padding-left: 160px;
+	z-index: 0;
+}
+
+.col-offset-120 {
+	padding-left: 120px;
+	z-index: 0;
+}
+
+.col-offset-280 {
+	padding-left: 280px;
+	z-index: 0;
+}
+
+/* 面板样式重定义 */
+.panel-info {
+	background-color: #fafeff;
+}
+
+.panel-heading {
+	height: 28px;
+	padding: 5px;
+	padding-left: 15px;
+	font-weight: bold;
+}

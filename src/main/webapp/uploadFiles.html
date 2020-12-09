@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <style>
+        .data-viewer {
+            font-family: "courier new", arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .focus {
+            background-color: #00AEAE;
+            color: #FFFFFF;
+        }
+        /*样式1*/
+        .a-upload {
+            padding: 4px 10px;
+            height: 20px;
+            line-height: 20px;
+            position: relative;
+            cursor: pointer;
+            color: #888;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+            display: inline-block;
+            *display: inline;
+            *zoom: 1
+        }
+
+        .a-upload  input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+            filter: alpha(opacity=0);
+            cursor: pointer
+        }
+
+        .a-upload:hover {
+            color: #444;
+            background: #eee;
+            border-color: #ccc;
+            text-decoration: none
+        }
+        /*样式2*/
+        .file {
+            position: relative;
+            display: inline-block;
+            background: #D0EEFF;
+            border: 1px solid #99D3F5;
+            border-radius: 4px;
+            padding: 4px 12px;
+            overflow: hidden;
+            color: #1E88C7;
+            text-decoration: none;
+            text-indent: 0;
+            line-height: 20px;
+        }
+        .file input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+        }
+        .file:hover {
+            background: #AADFFD;
+            border-color: #78C3F3;
+            color: #004974;
+            text-decoration: none;
+        }
+    </style>
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/echarts-gl.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/uploadFilesCtrl.js"></script>
+    <title>数据集上传配置</title>
+</head>
+<body ng-controller="uploadFilesCtrl">
+<div class="container-fluid">
+    <h3 class="page-header" style="">数据集管理
+        <a type="button"
+           class="btn btn-info btn-sm btn-block"
+           style="float: right; width: 10%"
+           href="ana-task-create-manage.html">任务管理
+        </a>
+    </h3>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" >
+                <div class="panel-heading">建模任务列表</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" placeholder="任务ID" ng-model="searchParam"
+                                   style="width: 50%;display: inline;padding-bottom: 10px">
+                            <button class="btn btn-info search-btn" ng-click="searchTask()">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-md-offset-2">
+
+                            <button type="button" class="btn btn-sm btn-default btn-block"
+                                    ng-click="getAllDataSet()" >
+                                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12" style="max-height:450px;overflow:auto">
+                            <table
+                                    class="table table-bordered table-striped table-condensed table-hover"
+                                    ng-init="getAllDataSet()">
+                                <thead>
+                                <tr class="default" style="background-color: #00a4e7;color:#fff;font-weight:normal">
+                                    <th style="font-weight:normal">ID</th>
+                                    <th style="font-weight:normal">数据集</th>
+                                    <th style="font-weight:normal">任务类型</th>
+                                    <th style="font-weight:normal">任务描述</th>
+                                    <th style="font-weight:normal">创建时间</th>
+                                    <th colspan="2" style="font-weight:normal">操 作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="dataSet in dataSetList" ng-click="showDataSetInfo(dataSet)">
+                                    <td ng-style='{"background-color": dataSet.id==currentDataSet.id? "#00a4e7": ""}'>{{dataSet.id}}</td>
+                                    <td>{{dataSet.dataSetCatalog}}</td>
+                                    <td>{{dataSet.dataSetName}}</td>
+                                    <td>{{dataSet.dataSetDescription}}</td>
+                                    <td>{{dataSet.createTime | myDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <!--<td>{{task.endTime | myDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>-->
+                                    <!--<td>{{(task.buildingProcess*100) | number: 2}} %</td>-->
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-danger btn-xs btn-block"
+                                                ng-click="delDataSet(dataSet)">删 除
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">选择预览文件</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <select ng-model="subFile" id="fileselect"
+                                                    class="form-control" style="width: 100%;"
+                                                    ng-change="showFileContent()">
+                                                <option ng-repeat="subfile in subFileList" value="{{subfile}}"
+                                                >{{subfile}}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">预览文件</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                            <textarea class="form-control"
+                                                                      rows="8" placeholder="文件预览"
+                                                                      ng-model="fileContents" readonly
+                                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">上传数据集</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="panel panel-default" >
+                                <div class="panel-heading">任务类型选择</div>
+                                <div class="panel-body">
+                                    <div class="col-md-6">
+                                        <label style="margin-top: 5px">选择数据集任务类型</label>
+                                        <select id="taskselect" class="form-control" style="width: 100%;">
+                                            <option ng-repeat="taskName in taskCatalogs" value="{{taskName}}"
+                                            >{{taskName}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label style="margin-top: 5px">数据集描述</label>
+                                        <textarea class="form-control"
+                                                  rows="6" placeholder="数据集描述"
+                                                  ng-model="dataDescription"
+                                                  style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="panel panel-default" >
+                                <div class="panel-heading">数据集上传</div>
+                                <div class="panel-body">
+                                    <div style="margin-left: 10px">
+                                        <div class="row" style="margin-top: 10px">
+                                            <div class="col-sm-4 col-md-4">
+                                                <label style="margin-top: 5px">模型训练集上传(必须)</label>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <input type="text" class="filetext form-control" readonly style="height: 30px"/>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <button class="change_btn btn btn-group-sm btn-success">
+                                                    <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px">
+                                            <div class="col-sm-4 col-md-4">
+                                                <label style="margin-top: 5px">类别文件上传(必须)</label>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <input type="text" class="filetext1 form-control" readonly style="height: 30px"/>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <button class="change_btn1 btn btn-group-sm btn-success">
+                                                    <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px">
+                                            <div class="col-sm-4 col-md-4">
+                                                <label style="margin-top: 5px">模型测试集上传(可选)</label>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <input type="text" class="filetext2 form-control" readonly style="height: 30px"/>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <button class="change_btn2 btn btn-group-sm btn-success">
+                                                    <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="row" style="margin-top: 10px">
+                                            <div class="col-sm-4 col-md-4">
+                                                <label style="margin-top: 5px">模型验证集上传(可选)</label>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <input type="text" class="filetext3 form-control" readonly style="height: 30px"/>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4">
+                                                <button class="change_btn3 btn btn-group-sm btn-success">
+                                                    <span class="glyphicon glyphicon-cloud-upload"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12" style="margin-top: 10px">
+                                            <form id="form1" method="post" target="frame1" action="multiUpload" enctype="multipart/form-data">
+                                                <div class="col-sm-4 col-md-4">
+                                                    <label style="margin-top: 5px;color: #ff090c">数据集名称（必须）</label>
+                                                </div>
+                                                <div class="col-sm-4 col-md-4">
+                                                    <input type="text" class="form-control" ng-model="dataName" name="datasetname" style="height: 30px" />
+                                                </div>
+                                                <div class="col-sm-4 col-md-4">
+                                                    <button class="btn btn-group-sm btn-info" onclick="upload()" ng-click="recordDataSet()">
+                                                        <span class="glyphicon glyphicon-send"></span> 提交
+                                                    </button>
+                                                </div>
+                                                <input type="file" name="file" class="filess"  style="display:none;">
+                                                <input type="file" name="file" class="filess1" style="display:none;">
+                                                <input type="file" name="file" class="filess2" style="display:none;">
+                                                <input type="file" name="file" class="filess3" style="display:none;">
+                                            </form>
+                                            <iframe name="frame1" frameborder="0" height="40" style="display:none;"></iframe>
+                                            <script>
+                                                function upload() {
+                                                    $("#form1").submit();
+                                                    var t = setInterval(function() {
+                                                        //获取iframe标签里body元素里的文字。即服务器响应过来的"上传成功"或"上传失败"
+                                                        var word = $("iframe[name='frame1']").contents().find("body").text();
+                                                        if (word != "") {
+                                                            //alert(word);
+                                                            Swal.fire({
+                                                                title: word,
+                                                                timer: 2000
+                                                            });//弹窗提示是否上传成功
+                                                            clearInterval(t);   //清除定时器
+                                                        }
+                                                    }, 1000);
+                                                }
+                                                $(".change_btn").click(function () { $(".filess").click(); });
+                                                $('.filess').change(function(){
+                                                    var file=$('.filess').val();
+                                                    console.log(file.substring(12,file.length));
+                                                    $('.filetext').val(file.substring(12,file.length));
+                                                });
+                                                $(".change_btn1").click(function () { $(".filess1").click(); });
+                                                $('.filess1').change(function(){
+                                                    var file=$('.filess1').val();
+                                                    $('.filetext1').val(file.substring(12,file.length));
+                                                });
+                                                $(".change_btn2").click(function () { $(".filess2").click(); });
+                                                $('.filess2').change(function(){
+                                                    var file=$('.filess2').val();
+                                                    $('.filetext2').val(file.substring(12,file.length));
+                                                });
+                                                $(".change_btn3").click(function () { $(".filess3").click(); });
+                                                $('.filess3').change(function(){
+                                                    var file=$('.filess3').val();
+                                                    $('.filetext3').val(file.substring(12,file.length));
+                                                })
+                                            </script>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

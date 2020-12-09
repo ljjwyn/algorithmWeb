@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <style>
+        .data-viewer {
+            font-family: "courier new", arial, sans-serif;
+            font-size: 12px;
+        }
+
+        .focus {
+            background-color: #00AEAE;
+            color: #FFFFFF;
+        }
+    </style>
+
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/echarts-gl.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/taskManagementCtrl.js"></script>
+    <title>计算任务管理</title>
+</head>
+<body ng-controller="taskManagementCtrl">
+<div class="container-fluid">
+    <h3 class="page-header" style="">任务管理
+        <a type="button"
+           class="btn btn-info btn-sm btn-block"
+           style="float: right; width: 10%"
+           href="data-computing.html">新建计算任务
+        </a>
+    </h3>
+
+    <!-- 任务列表 -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" >
+                <div class="panel-heading">任务列表</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <input type="text" class="form-control" placeholder="任务ID" ng-model="searchParam"
+                                   style="width: 50%;display: inline;padding-bottom: 10px">
+                            <button class="btn btn-info search-btn" ng-click="searchTask()">
+                                <span class="glyphicon glyphicon-search"></span>
+                            </button>
+                        </div>
+                        <div class="col-md-2 col-md-offset-2">
+
+                            <button type="button" class="btn btn-sm btn-default btn-block"
+                                    ng-click="getAllTasks()" >
+                                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12" style="max-height:450px;overflow:auto">
+                            <table
+                                    class="table table-bordered table-striped table-condensed table-hover"
+                                    ng-init="getAllTasks()">
+                                <thead>
+                                <tr class="default" style="background-color: #00a4e7;color:#fff;font-weight:normal">
+                                    <th style="font-weight:normal">任务ID</th>
+                                    <th style="font-weight:normal">任务名称</th>
+                                    <th style="font-weight:normal">创建时间</th>
+                                    <th style="font-weight:normal">是否完成</th>
+                                    <th style="font-weight:normal">完成时间</th>
+                                    <th style="font-weight:normal">执行进度</th>
+                                    <th colspan="2" style="font-weight:normal">操 作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="task in taskList" ng-click="showTaskInfo(task)">
+                                    <td ng-style='{"background-color": task.taskId==focus? "#00a4e7": ""}'>{{task.taskId}}</td>
+                                    <td>{{task.taskName}}</td>
+                                    <td>{{task.timeCreate | myDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td>{{task.finished == false ? "否" : "是"}}</td>
+                                    <td>{{task.timeCompleted | myDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td>{{(task.taskProcessRate*100) | number: 2}} %</td>
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-danger btn-xs btn-block"
+                                                ng-click="delTask(task)">删 除
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+
+
+                        <!--
+                        <div class="col-md-1">
+                            <div class="form-group form-group-sm">
+                                <button type="button" class="btn btn-sm btn-block btn-default"
+                                        ng-click="">
+                                    <span class="glyphicon glyphicon-time" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                        </div>
+                        -->
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">任务信息</div>
+                <div class="panel-body">
+                    <form class="form-horizontal">
+                        <div class="form-group form-group-sm" >
+
+                            <label for="currentTask-taskId"
+                                   class="col-sm-2 control-label">基础信息</label>
+
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="currentTask-taskId"
+                                       placeholder="任务ID" ng-model="currentTask.taskId" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="currentTask-name"
+                                       placeholder="名称" ng-model="currentTask.taskName" readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <input
+                                        type="text" class="form-control"
+                                        ng-model="currentTask.dataBaseSubject"
+                                        aria-describedby="currentTask-datasetPath" placeholder="主题库" readonly>
+                            </div>
+
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <!--
+                            <label for="currentTask-description"
+                                   class="col-sm-2 control-label">任务描述</label>
+                                   -->
+                            <div class="col-md-offset-2 col-md-9">
+									<textarea id="currentTask-description" class="form-control"
+                                              rows="3" placeholder="该任务的描述信息"
+                                              ng-model="currentTask.taskDescription" readonly></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label for="currentTask-description"
+                                   class="col-sm-2 control-label">公式</label>
+                            <div class="col-md-9">
+									<textarea class="form-control"
+                                              rows="5" placeholder="公式"
+                                              ng-model="currentTask.formulas" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group form-group-sm">
+                            <label for="currentTask-description"
+                                   class="col-sm-2 control-label">规则</label>
+                            <div class=" col-md-9">
+									<textarea class="form-control"
+                                              rows="5" placeholder="规则"
+                                              ng-model="currentTask.rules" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <div class="col-md-offset-2 col-md-2">
+                                <input type="text" class="form-control"
+                                       placeholder="起始行数" ng-model="startLimit" >
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control"
+                                       placeholder="终止行数" ng-model="endLimit" >
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-sm btn-info"
+                                        ng-click="getTaskOutput(currentTask)" ng-disabled="!viewTaskBtnStatus">
+                                    查看任务输出
+                                </button>
+                                <button type="button" class="btn btn-sm btn-info"
+                                        ng-click="showDetial(currentTask)" ng-disabled="!viewTaskBtnStatus">
+                                    企业信息
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="row" ng-show="taskOuputDivVisible">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">任务输出</div>
+                <div class="panel-body">
+
+                    <div class="row" ng-show="taskOuputDivVisible">
+                        <div class="col-md-12">
+                            <!--	<textarea class="form-control data-viewer" id="taskDescription"
+                                    rows="15" placeholder="输出数据"
+                                    ng-model="currentTaskOutputRawData"></textarea>
+                                    -->
+                            <div class="panel panel-default">
+                                <div class="panel-heading">数据及标签</div>
+                                <div class="panel-body">
+                                    <div class="table-responsive" style="max-height:450px;overflow:auto">
+                                    <table class="table table-bordered table-condensed table-hover">
+                                        <thead>
+                                        <tr class="default">
+                                            <th ng-repeat="col in output1.columnInfo">{{col.Comment}}</th>
+                                        </tr>
+                                        <tr class="default">
+                                            <!--
+                                            <th ng-repeat="col in output1.columnInfo">{{col.Field}}</th>
+                                            <th ng-repeat="col in output1.outputInfo">{{col.Field}}</th>
+                                            -->
+                                            <th ng-repeat="(key, value) in output1.result[0]">{{key}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="data in output1.result" >
+                                            <td ng-repeat="colValue in data track by $index"
+                                                ng-show="$index < output1.columnInfo.length"
+                                                style="min-width: 80px;word-wrap: break-word"
+                                            >{{colValue|limitTo:10}}</td>
+                                            <td ng-repeat="colValue in data track by $index"
+                                                ng-show="$index >= output1.columnInfo.length"
+                                                style="min-width: 80px;word-wrap: break-word"
+                                            >{{colValue}}</td>
+                                        </tr>
+                                        </tbody>
+
+                                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">全局变量</div>
+                                <div class="panel-body">
+                                    <table class="table table-bordered table-striped table-condensed table-hover">
+                                        <thead>
+                                        <tr class="default">
+                                            <th ng-repeat="(key, value) in output2[0]" ng-show="!$first">{{key}}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr ng-repeat="data in output2">
+                                            <td ng-repeat="(key, value) in data track by $index" ng-show="!$first">{{value}}</td>
+                                        </tr>
+                                        </tbody>
+
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</body>
+</html>

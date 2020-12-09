@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="css/bootstrap-theme.css" rel="stylesheet">-->
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/anaDatasetCtrl.js"></script>
+    <title>任务管理</title>
+</head>
+<body ng-controller="anaDatasetCtrl">
+<div class="container-fluid">
+    <div class="" style="height: 20px"></div>
+    <span class="btn-info btn-sm " style="display: inline-block"  disabled="">任务管理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="background-color: #00a4e7;display: inline-block">数据集
+    </span>
+    <span class="glyphicon glyphicon-chevron-right"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据预处理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据建模
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">预测分析
+    </span>
+    <h3 class="page-header" style="margin-top: 10px"></h3>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">配置数据集（{{taskId}}）</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">数据集类别</div>
+                                <div class="panel-body">
+                                    <button type="button" class="btn btn-primary"
+                                            ng-click="SQLshow=true;TXTshow=false;otherDataShow=false">SQL类型
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            ng-click="SQLshow=false;TXTshow=true;otherDataShow=false">文本类型
+                                    </button>
+                                    <button type="button" class="btn btn-primary"
+                                            ng-click="SQLshow=false;TXTshow=false;otherDataShow=true">其他类型
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="TXTshow">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">文本类型</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">数据集</div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <select ng-init="getDataSetList()" id="datadirselect"
+                                                                    class="form-control" style="width: 100%;" ng-model="currentDBName"
+                                                                    >
+                                                                <option ng-repeat="dataset in dataSetNameList" value="{{dataset}}">{{dataset}}</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <button type="button" class="btn btn-primary btn-sm btn-block"
+                                                                    ng-click="getSubFileName()">连接数据集
+                                                            </button>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <input type="text" class="form-control" disabled
+                                                                   placeholder="数据集对应任务类别" ng-model="dataSetCatalog" readonly="readonly">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">选择预览文件</div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <select ng-model="subFile" id="fileselect"
+                                                                    class="form-control" style="width: 100%;"
+                                                                    ng-change="showFileContent()">
+                                                                <option ng-repeat="subfile in subFileList" value="{{subfile}}"
+                                                                >{{subfile}}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">数据集介绍</div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control"
+                                                                      rows="4" placeholder="readme"
+                                                                      ng-model="readme" readonly
+                                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">预览文件</div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <textarea class="form-control"
+                                                                      rows="8" placeholder="文件预览"
+                                                                      ng-model="fileContents" readonly
+                                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3" style="float: right">
+                                                <button type="button" class="btn btn-info btn-sm btn-block"
+                                                        ng-click="preprocessing()">数据集预处理
+                                                </button>
+                                            </div>
+                                            <div class="col-md-3" style="float: right">
+                                                <select ng-model="subFile" id="pretrain"
+                                                        class="form-control" style="width: 100%;">
+                                                    <option ng-repeat="temp in isPreTrain" value="{{temp}}"
+                                                    >{{temp}}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top: 5px" ng-show="textClassifyShow">
+                                        <div class="col-md-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">预处理文件</div>
+                                                <div class="panel-body">
+                                                    <label>这是<font color="blue">{{dataSetCatalog}}</font>任务,基于<font color="blue">{{pretraintype}}</font>实例化加载</label>
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading">标签展示</div>
+                                                                <div class="panel-body">
+                                                                    <textarea class="form-control"
+                                                                              rows="10" placeholder="标签预览"
+                                                                              ng-model="labelstr" readonly
+                                                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-8">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading">实例化数据集预览</div>
+                                                                <div class="panel-body">
+                                                                    <textarea class="form-control"
+                                                                              rows="10" placeholder="实例化数据集预览"
+                                                                              ng-model="dataSetClass" readonly
+                                                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <button type="button" class="btn btn-success"
+                                                                        style="float: right;margin-left: 5px"
+                                                                        ng-click="modellingConfig()">
+                                                                    <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 模型配置
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row" style="margin-top: 5px" ng-show="dataClassifyShow">
+                                        <div class="col-md-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">预处理文件</div>
+                                                <div class="panel-body">
+                                                    <label>这是<font color="blue">{{dataSetCatalog}}</font>任务，可直接实例化所有特征或转化为数据表手动筛选特征</label>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="panel panel-default">
+                                                                <div class="panel-heading">特征预览</div>
+                                                                <div class="panel-body">
+                                                                    <div class="col-md-12" style="max-height:450px;overflow:auto">
+                                                                        <table
+                                                                                class="table table-bordered table-striped table-condensed table-hover">
+                                                                            <thead>
+                                                                            <tr class="default" style="background-color: #00a4e7;color:#fff;font-weight:normal">
+                                                                                <th style="font-weight:normal" ng-repeat="title in dataSetTitle">{{title}}</th>
+                                                                            </tr>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                            <tr>
+                                                                                <td ng-repeat="index in dataSetXLen">{{dataSetX[index]}}</td>
+                                                                                <td style="background-color: #ff090c;color:#fff;font-weight:normal">{{dataSetY}}</td>
+                                                                            </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <button type="button" class="btn btn-success"
+                                                                        style="float: right"
+                                                                        ng-click="">
+                                                                    <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 建模分析
+                                                                </button>
+                                                                <button type="button" class="btn btn-success"
+                                                                        style="float: right;margin-right: 5px"
+                                                                        ng-click="">
+                                                                    <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 转化表
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" ng-show="SQLshow">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">SQL类型</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">数据表</div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <select ng-init="getAllSubjectDBs()" id="dbSelect"
+                                                                    class="form-control" style="width: 100%;" ng-model="currentDBName"
+                                                                    ng-change="listMySQLTables();mysqlDbInfoVisible = false">
+                                                                <option ng-repeat="db in dbInfoList" value="{{db.db_name}}">{{db.db_comment}}</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                            <button type="button" class="btn btn-primary btn-sm btn-block"
+                                                                    ng-click="listMySQLTables()">连接主题库
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row" ng-show="mysqlDbInfoVisible">
+                                        <div class="col-md-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">选择表</div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-8">
+                                                            <!--
+                                                            <ul class="nav nav-tabs">
+                                                                <li ng-repeat="(key, value) in tableMeta" ng-class="currentMySQLTable == key ? '' : 'active'"
+                                                                ng-if="value != '' && value != null">
+                                                                    <a href ng-click="showTableInfo(key)">{{value}}</a>
+                                                                </li>
+                                                            </ul>
+                                                            -->
+
+                                                            <select ng-model="currentTableName" id="tableSelect"
+                                                                    class="form-control" style="width: 100%;"
+                                                                    ng-change="showTableInfo()">
+                                                                <option ng-repeat="t in tableList" value="{{t.name}}"
+                                                                >{{t | commentFilter}}
+                                                                </option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-bordered table-condensed table-hover">
+                                                                    <caption>数据表 {{currentTableName}} 的数据样例</caption>
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <th>No</th>
+
+                                                                        <th ng-repeat="t in currentTableInfo"
+                                                                            ng-style="{'background-color':isSelected(key) ?'#aad3ff':''}"
+                                                                            style="min-width: 80px;max-width:300px;word-wrap: break-word">
+                                                                            {{t | commentFilter}}
+                                                                        </th>
+
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    <tr ng-repeat="item in mysqlTableSampleData">
+                                                                        <td>{{$index+1}}</td>
+                                                                        <td ng-repeat="(key, value) in item"
+                                                                            ng-style="{'background-color':isSelected(key) ?'#aad3ff':''}"
+                                                                            style="min-width: 80px;max-width:300px;word-wrap: break-word">
+                                                                            {{value|limitTo:20}}
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <br>
+                                                        <div class="col-md-2">
+                                                            <button type="button" class="btn btn-primary btn-sm btn-block"
+                                                                    ng-click="addATableToSelected()">选中该表
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row" >
+                                        <div class="col-md-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">已选中的数据表</div>
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <div class="col-md-7">
+                                                            <div class="table-responsive">
+                                                                <table class="table table-bordered table-condensed table-hover">
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <th>主题库</th>
+                                                                        <th>表</th>
+                                                                        <th>操作</th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    <tr ng-repeat="item in selectedDBAndTables">
+                                                                        <td>{{item.dbComment}}</td>
+                                                                        <td>{{item.tableComment}}</td>
+                                                                        <td> <button type="button"
+                                                                                     class="btn btn-danger btn-xs btn-block"
+                                                                                     ng-click="delSelectedDBAndTables($index)">删 除
+                                                                        </button>
+                                                                        </td>
+                                                                    </tr>
+                                                                    <tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-md-2">
+                                                            <button type="button" class="btn btn-primary btn-sm btn-block"
+                                                                    ng-click="submitConfig()">提交配置
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <button type="button" class="btn btn-success"
+                                                                style="float: right"
+                                                                ng-click="start()">
+                                                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 预测分析
+                                                        </button>
+                                                        <button type="button" class="btn btn-success"
+                                                                style="float: right;margin-right: 5px"
+                                                                ng-click="predictstart()">
+                                                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 数据建模
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

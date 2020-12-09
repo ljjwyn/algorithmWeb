@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/echarts-gl.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/modelConfigCtrl.js"></script>
+    <title>模型预设参数配置</title>
+</head>
+<body ng-controller="modelConfigCtrl">
+<div class="container-fluid">
+    <h3 class="page-header" style="">模型预设参数配置
+        <a type="button"
+           class="btn btn-info btn-sm btn-block"
+           style="float: right; width: 10%"
+           href="ana-task-create-manage.html">新建任务
+        </a>
+    </h3>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">参数配置</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <label style="margin-top: 5px">配置信息</label>
+                        </div>
+                        <div class="col-md-3">
+                            <select ng-init="getModelConfig()" id="configselect"
+                                    ng-model="modelconfig"
+                                    class="form-control" style="width: 80%;"
+                                    ng-change="switchModelConfig()">
+                                <option ng-repeat="modelConf in selectConfigList" value="{{modelConf.modelName}}"
+                                >{{modelConf.modelName}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-8" style="margin-top: 5px">
+                            <label style="float: right;margin-right: 10px">基础模型标号:<font color="red">{{modelConfig.basicModelId}}</font></label>
+                            <label>配置UUID:<font color="blue">{{modelConfig.uid}}</font></label><br>
+                            <label>任务类型:<font color="blue">{{modelConfig.modelType}}</font></label>
+                        </div>
+                    </div>
+                    <form class="form-horizontal" style="margin-top: 20px">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group form-group-sm" >
+
+
+
+                                    <div class="col-md-6">
+                                        <label style="margin-top: 5px">configName(配置名称)</label>
+                                        <input type="text" class="form-control"
+                                               placeholder="整体配置名称" ng-model="modelConfig.modelName" >
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label style="margin-top: 5px">dataSetName(数据集名称)</label>
+                                        <!--<input type="text" class="form-control"-->
+                                        <!--placeholder="dataSetName(数据集名称)" ng-model="modelConfig.dataSetName" >-->
+                                        <select ng-init="getDataSet()" id="dataSetNames"
+                                                class="form-control" style="width: 100%;">
+                                            <option ng-repeat="dataSetName in dataSetList" value="{{dataSetName}}"
+                                            >{{dataSetName}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                </div>
+                                <div class="form-group form-group-sm" >
+
+                                    <div class="col-md-12">
+                                        <label style="margin-top: 5px">configDescription(配置描述)</label>
+                                        <!--<input-->
+                                        <!--type="text" class="form-control"-->
+                                        <!--ng-model="modelconfigDescription" placeholder="configDescription(配置描述)" >-->
+                                        <textarea class="form-control"
+                                                  rows="4" placeholder="configDescription(配置描述)"
+                                                  ng-model="modelconfigDescription"
+                                                  style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">具体参数</div>
+                                    <div class="panel-body">
+                                        <div class="col-md-12" style="margin-top: 10px">
+                                            <label>建模参数</label>
+                                            <table class="table table-bordered table-condensed"
+                                                   style="text-align:center">
+                                                <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th>参数名称</th>
+                                                    <th>数值</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr ng-repeat="(key, value) in modelConfigMap">
+                                                    <td>{{$index}}</td>
+                                                    <td>{{key}}</td>
+                                                    <td><input type="text" class="form-control"
+                                                               ng-model="value" ng-blur="setLabelInput(key, value)"></td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <!--<div class="form-group form-group-sm" >-->
+
+                            <!--<label class="col-sm-2 control-label"></label>-->
+
+                            <!--<div class="col-md-3">-->
+                                <!--<label style="margin-top: 5px">num_epochs(迭代次数)</label>-->
+                                <!--<input type="text" class="form-control"-->
+                                       <!--placeholder="num_epochs(迭代次数)" ng-model="modelConfigMap.num_epachs" >-->
+                            <!--</div>-->
+                            <!--<div class="col-md-3">-->
+                                <!--<label style="margin-top: 5px">batch_size(批次大小)</label>-->
+                                <!--<input type="text" class="form-control"-->
+                                       <!--placeholder="batch_size(批次大小)" ng-model="modelConfigMap.batch_size" >-->
+                            <!--</div>-->
+                            <!--<div class="col-md-3">-->
+                                <!--<label style="margin-top: 5px">pad_size(最大句子长度)</label>-->
+                                <!--<input-->
+                                        <!--type="text" class="form-control"-->
+                                        <!--ng-model="modelConfigMap.pad_size" placeholder="pad_size(最大句子长度)" >-->
+                            <!--</div>-->
+
+
+                        <!--</div>-->
+
+                        <!--<div class="form-group form-group-sm">-->
+                            <!--&lt;!&ndash;-->
+                            <!--<label for="currentTask-description"-->
+                                   <!--class="col-sm-2 control-label">任务描述</label>-->
+                                   <!--&ndash;&gt;-->
+                            <!--<label class="col-sm-2 control-label"></label>-->
+                            <!--<div class="col-md-3" >-->
+                                <!--<label style="margin-top: 5px">learning_rate(学习率)</label>-->
+                                <!--<input-->
+                                        <!--type="text" class="form-control"-->
+                                        <!--ng-model="modelConfigMap.learning_rate" placeholder="learning_rate(学习率)" >-->
+
+                            <!--</div>-->
+                            <!--<div class="col-md-3" >-->
+                                <!--<label style="margin-top: 5px">hidden_size(隐藏层数)</label>-->
+                                <!--<input-->
+                                        <!--type="text" class="form-control"-->
+                                        <!--ng-model="modelConfigMap.hidden_size" placeholder="hidden_size(隐藏层数)" >-->
+
+                            <!--</div>-->
+
+                        <!--</div>-->
+                        <div class="form-group form-group-sm">
+                            <div class="col-md-3" style="float: right;margin: auto;">
+                                <button type="button" class="btn btn-sm btn-info"
+                                        ng-click="saveConfig()">
+                                    保存配置
+                                </button>
+                                <button type="button" class="btn btn-sm btn-success"
+                                        ng-click="setDefaultConfig()">
+                                    设为默认参数
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">模型参数</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                            <textarea class="form-control"
+                                                                      rows="8" placeholder="模型参数"
+                                                                      ng-model="modelConfigMapStr" readonly
+                                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">模型结构</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                            <textarea class="form-control"
+                                                                      rows="10" placeholder="模型结构"
+                                                                      ng-model="modelConstruct" readonly
+                                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

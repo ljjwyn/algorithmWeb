@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/echarts-gl.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/prepareModellingCtrl.js"></script>
+    <title>模型参数配置</title>
+</head>
+<body ng-controller="prepareModellingCtrl">
+<div class="container-fluid">
+    <h3 class="page-header" style="">任务管理
+        <a type="button"
+           class="btn btn-info btn-sm btn-block"
+           style="float: right; width: 10%"
+           href="ana-task-create-manage.html">新建计算任务
+        </a>
+    </h3>
+    <div class="col-md-12">
+        <div class="panel panel-primary">
+            <div class="panel-heading">建模任务配置({{taskId}})</div>
+            <div class="panel-body">
+                <div class="row" style="margin-left: 5px">
+                    <div class="col-md-1" style="margin-top: 5px">
+                        <label>配置信息</label>
+                    </div>
+                    <div class="col-md-3">
+                        <select ng-model="subFile" id="algorithmSelect"
+                                class="form-control" style="width: 100%;"
+                                ng-change="changeAlg()" ng-init="getAlgList()">
+                            <option ng-repeat="algorithm in algorithmList" value="{{algorithm.modelName}}"
+                            >{{algorithm.modelName}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-8">
+                        <label>算法种类:<font color="blue">{{selectAlg.modelCatalog}}</font></label><br>
+                        <label>算法描述:<font color="blue">{{selectAlg.modelDec}}</font></label>
+                    </div>
+                </div>
+                <div class="col-md-4" style="margin-top: 10px">
+                    <label>新建模型名称</label>
+                    <input type="text" class="form-control"
+                           placeholder="新建模型名称" ng-model="newModelName">
+                </div>
+                <div class="col-md-12" style="margin-top: 10px">
+                    <label>模型描述信息</label>
+                    <textarea class="form-control"
+                              rows="10" placeholder="模型描述信息"
+                              ng-model="newModelDescription"
+                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                </div>
+                <div class="col-md-12" style="margin-top: 10px">
+                    <label>模型参数</label>
+                    <table class="table table-bordered table-condensed" ng-init="getDefaultConf11()">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>参数名称</th>
+                            <th>数值</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="(key, value) in configMap">
+                            <td>{{$index}}</td>
+                            <td>{{key}}</td>
+                            <td><input type="text" class="form-control"
+                                       ng-model="value" ng-blur="setLabelInput(key, value)"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <button type="button" class="btn btn-success"
+                                style="float: right;margin-left: 5px"
+                                ng-click="startModelling()">
+                            <span class="glyphicon glyphicon-log-in" aria-hidden="true"></span> 建模分析
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

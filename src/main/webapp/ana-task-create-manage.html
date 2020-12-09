@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="css/bootstrap-theme.css" rel="stylesheet">-->
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/anaTaskCreateManageCtrl.js"></script>
+    <title>任务管理</title>
+</head>
+<body ng-controller="anaTaskCreateManageCtrl">
+<div class="container-fluid">
+    <div class="" style="height: 20px"></div>
+
+    <span class="btn-info btn-sm " style="background-color: #00a4e7;display: inline-block">任务管理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据集
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据预处理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据建模
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">预测分析
+    </span>
+    <h3 class="page-header" style="margin-top: 10px"></h3>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="panel panel-default" style="background-color: #2d5f8b">
+                <div class="panel-body">
+                    <div class="form-group form-group-sm">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-sm-5 col-md-5">
+                                    <input type="text" class="form-control" id="taskID" disabled
+                                           placeholder="任务ID(创建成功后自动生成)" ng-model="taskConfig.taskId" readonly="readonly">
+                                </div>
+                                <div class="col-sm-5 col-md-5">
+                                    <input type="text" class="form-control" id="taskName"
+                                           placeholder="任务名称" ng-model="taskConfig.taskName">
+                                </div>
+
+                                <div class="col-sm-2 col-md-2">
+                                    <button type="button" class="btn btn-sm btn-block btn-success"
+                                            ng-click="createTask()">
+                                        创建任务 <span class="glyphicon glyphicon-send" aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-12 col-md-12">
+                                    <input type="text" class="form-control" id="taskDesc"
+                                           placeholder="任务描述" ng-model="taskConfig.taskDesc">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default" >
+                <div class="panel-heading">任务列表</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12" style="max-height:450px;overflow:auto">
+                            <table
+                                    class="table table-bordered table-striped table-condensed table-hover"
+                                    ng-init="getAllTasks()">
+                                <thead>
+                                <tr class="default" style="background-color: #00a4e7;color:#fff;font-weight:normal">
+                                    <th style="font-weight:normal">任务ID</th>
+                                    <th style="font-weight:normal">任务名称</th>
+                                    <th style="font-weight:normal">任务描述</th>
+                                    <th style="font-weight:normal">创建时间</th>
+                                    <th colspan="2" style="font-weight:normal">操 作</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="task in taskList" ng-click="showTaskDetail(task)">
+                                    <td ng-style='{"background-color": task.uid==focusTask.uid? "#00a4e7": ""}'>{{task.uid}}</td>
+                                    <td>{{task.taskName}}</td>
+                                    <td>{{task.taskDescription | limitTo: 20}}</td>
+                                    <td>{{task.startDate | myDate | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                                    <td>
+                                        <button type="button"
+                                                class="btn btn-danger btn-xs btn-block"
+                                                ng-click="delTask(task)">删 除
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="taskOuputDivVisible">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">预测输出</div>
+                <div class="panel-body">
+                    <p style="font-family: sans-serif;font-weight: bold;color:red;">这个任务是：{{taskInformation}} 任务</p>
+                    <div class="col-md-12">
+                        <div class="panel-heading">选择预测结果数据集</div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <select ng-model="preTableIndex"
+                                            ng-init="preTableIndex = ''"
+                                            class="form-control" style="width: 100%;">
+                                        <option ng-repeat="x in predictTableList" value="{{$index}}">{{x}}
+                                        </option>
+                                    </select>
+                                </div>
+                                <button type="button"
+                                        class="btn btn-success btn-sm"
+                                        ng-click="switchTable()">
+                                    查 看
+                                </button>
+                                <button type="button" style="float:right;"
+                                        class="btn btn-info btn-sm"
+                                        ng-click="predictDetail()">
+                                    标签详情
+                                </button>
+                                <button type="button" style="float:right;margin-right: 10px;"
+                                        class="btn btn-info btn-sm"
+                                        ng-click="tagLink()">
+                                    标签组合
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel panel-default" ng-show!="allShowFlage">
+                            <div class="panel-heading">图表分析</div>
+                            <div class="panel-body">
+                                <div id="main" class="col-md-12">
+                                    <div id="3DChart" style="width: 100%;height:450px" ></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" ng-show="allShowFlage">
+                        <div class="row">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">预测结果数据集样例</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-condensed table-hover">
+                                                    <caption>预处理数据表 {{currentMySQLTablePre.name}} 的数据样例</caption>
+                                                    <thead>
+                                                    <tr>
+                                                        <th>No</th>
+
+                                                        <th ng-repeat="key in tableItemPre"
+                                                            ng-style="{'background-color':key=='PREDICT_LABEL'?'#ff090c':''}"
+                                                            style="min-width: 80px;max-width:300px;word-wrap: break-word">
+                                                            {{key}}
+                                                        </th>
+
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr ng-repeat="item in mysqlTableSampleDataPre">
+                                                        <td>{{$index+1}}</td>
+                                                        <td ng-repeat="key in countItemPre"
+                                                            ng-style="{'background-color':key==0 ?'#ff090c':''}"
+                                                            style="min-width: 80px;max-width:300px;word-wrap: break-word">
+                                                            {{item[key]|limitTo:10}}
+                                                        </td>
+                                                    </tr>
+                                                    <tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" ng-show="allShowFlage">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">参数配置</div>
+                            <div class="panel-body">
+                                <form class="form-horizontal">
+
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-sm-2 control-label">参数</label>
+                                        <div class="col-md-9">
+									<textarea class="form-control"
+                                              rows="8" placeholder="模型训练参数"
+                                              ng-model="taskConf" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6" ng-show="allShowFlage">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">标签信息</div>
+                            <div class="panel-body">
+                                <form class="form-horizontal">
+
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-sm-2 control-label">标签规则</label>
+                                        <div class="col-md-9">
+									<textarea class="form-control"
+                                              rows="8" placeholder="标签规则"
+                                              ng-model="labelRules" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+
+                                    </div>
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-sm-2 control-label">标签释义</label>
+                                        <div class="col-md-9">
+									<textarea class="form-control"
+                                              rows="8" placeholder="标签释义"
+                                              ng-model="labelDescription" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" ng-show="taskModelDisplay">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">建模参数</div>
+                <div class="panel-body">
+                    <p style="font-family: sans-serif;font-weight: bold;color:red;">这个任务是：{{taskInformation}} 任务</p>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">标签规则</div>
+                            <div class="panel-body">
+                                <form class="form-horizontal">
+                                    <div class="form-group form-group-sm">
+                                        <label class="col-sm-2 control-label">标签规则</label>
+                                        <div class="col-md-9">
+									<textarea class="form-control"
+                                              rows="6" placeholder="标签规则"
+                                              ng-model="labelRules" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">标签释义</div>
+                            <div class="panel-body">
+                                <div class="form-group form-group-sm">
+                                    <label class="col-sm-2 control-label">标签释义</label>
+                                    <div class="col-md-9">
+									<textarea class="form-control"
+                                              rows="6" placeholder="标签释义"
+                                              ng-model="labelDescription" readonly
+                                              style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">模型配置信息</div>
+                                <div class="panel-body">
+                                    <form class="form-horizontal">
+                                        <div class="col-md-12">
+                                            <label class="col-sm-2 control-label">模型参数</label>
+                                            <div class="col-md-9">
+									        <textarea class="form-control"
+                                                      rows="4" placeholder="模型训练参数"
+                                                      ng-model="taskConf" readonly
+                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                            </div>
+
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>
+</body>
+</html>

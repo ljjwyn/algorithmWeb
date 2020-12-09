@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="css/bootstrap-theme.css" rel="stylesheet">-->
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/anaDatasetCtrl.js"></script>
+    <title>任务管理</title>
+</head>
+<body>
+<progress id="upload_progress" value="0" max="100"></progress>
+<input id="upload_file" type="file" name="upload_file" />
+<button id="btn_start">Start</button>
+<button id="btn_cancel">Cancel</button>
+<script type="text/javascript">
+    var xhr = new XMLHttpRequest();
+    var progressBar = document.getElementById('upload_progress');
+    $('#btn_start').click(function() {
+        var uploadFile = document.getElementById('upload_file').files[0];
+        var formData = new FormData();
+        formData.append('upload_file', uploadFile);
+
+        // // ---------------------------------------
+        // // 原生xmlHttpRequest发送
+        // xhr.open('post', '/webAgorithm/multiUpload');
+        // xhr.onload = function() {
+        //     alert('完成！');
+        // };
+        // xhr.onerror = function() {
+        //     alert('无法连接服务器！');
+        // };
+        // xhr.upload.onprogress = function(progress) {
+        //     if (progress.lengthComputable) {
+        //         console.log(progress.loaded / progress.total * 100);
+        //         progressBar.max = progress.total;
+        //         progressBar.value = progress.loaded;
+        //     }
+        // };
+        // xhr.upload.onloadstart = function() {
+        //     console.log('started...');
+        // };
+        // xhr.send(formData);
+
+        // ---------------------------------------
+        // 使用jQuery发送
+
+        $.ajax({
+       type: "POST",
+    　　url: "multiUpload",
+    　　data: formData , //这里上传的数据使用了formData 对象
+    　　processData: false,
+    　　contentType: false, //必须false才会自动加上正确的Content-Type
+    　　//这里我们先拿到jQuery产生的 XMLHttpRequest对象，为其增加 progress 事件绑定，然后再返回交给ajax使用
+    　　xhr: function() {
+    　　　　var xhr = $.ajaxSettings.xhr();
+    　　　　if (xhr.upload) {
+    　　　　　　xhr.upload.onprogress = function(progress) {
+                    if (progress.lengthComputable) {
+                        console.log(progress.loaded / progress.total * 100);
+                        progressBar.max = progress.total;
+                        progressBar.value = progress.loaded;
+                    }
+                };
+                xhr.upload.onloadstart = function() {
+                    console.log('started...');
+                };
+     　　　 }
+              return xhr;
+     　 }
+    }).done(function(resp) {
+        alert('完成！');
+    }).fail(function(err) {
+        alert('无法连接服务器！')
+    });
+
+    });
+
+    $('#btn_cancel').click(function() {
+        xhr.abort();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html ng-app="indexApp">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-theme.css" rel="stylesheet">
+    <link href="css/jquery-ui.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/sweetalert2.css" rel="stylesheet">
+    <script src="js/angular/1.6.3/angular.js"></script>
+    <script src="js/angular/1.6.3/angular-route.js"></script>
+    <script src="js/angular/1.6.3/angular-ui-router.js"></script>
+    <script src="js/angular/1.6.3/angular-file-upload.js"></script>
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery-ui.js"></script>
+    <script src="js/sweetalert.min.js"></script>
+    <script src="js/ie10-viewport-bug-workaround.js"></script>
+    <script src="js/ie-emulation-modes-warning.js"></script>
+    <script src="js/echarts.min.js"></script>
+    <script src="js/echarts-gl.min.js"></script>
+    <script src="ng/indexApp.js"></script>
+    <script src="ng/modellingCtrl.js"></script>
+    <title>建模可视化测试</title>
+</head>
+<body ng-controller="modellingCtrl">
+<div class="container-fluid">
+    <div class="" style="height: 20px"></div>
+
+    <span class="btn-info btn-sm " style="display: inline-block">任务管理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据集
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">数据预处理
+    </span>
+    <span class="glyphicon glyphicon-chevron-right"></span>
+    <span class="btn-info btn-sm " style="background-color: #00a4e7;display: inline-block" disabled="">数据建模
+    </span>
+    <span class="glyphicon glyphicon-chevron-right" style="color: #8c8c8c"></span>
+    <span class="btn-info btn-sm " style="display: inline-block" disabled="">预测分析
+    </span>
+    <h6 class="page-header" style="">建模
+        <a type="button"
+           class="btn btn-info btn-sm btn-block"
+           style="float: right; width: 10%"
+           href="ana-task-create-manage.html">建模任务管理
+        </a>
+    </h6>
+    <div class="row">
+        <div class="col-sm-8 col-md-8">
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert"
+                        aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <strong>说 明</strong> 可视化建模过程监测
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12 col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">模型训练详情({{taskId}})</div>
+                <div class="panel-body">
+                    <div class="col-md-3">
+                        <select id="speedSet"
+                                class="form-control" style="width: 80%;"
+                                ng-model="speedsets"
+                                ng-change="switchSpeed()">
+                            <option ng-repeat="speed in speedModes" value="{{speed}}"
+                            >{{speed}}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 10px">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    训练集损失
+                                </div>
+                                <div id="modelLossChart" style="width: 100%;height:400px;margin-top: 10px" ></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    训练集准确率
+                                </div>
+                                <div id="modelAccChart" style="width: 100%;height:400px;margin-top: 10px" ></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="margin-top: 10px">
+                        <div class="col-md-7">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">训练过程详情</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                            <textarea class="form-control" id="trainInfoText"
+                                                                      rows="8" placeholder="训练过程详情"
+                                                                      ng-model="trainInfoStr" readonly
+                                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">验证集结果</div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                                            <textarea class="form-control"
+                                                                      rows="8" placeholder="验证集结果"
+                                                                      ng-model="recallAndF1" readonly
+                                                                      style="font-family: 'Courier New', Courier, monospace;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
