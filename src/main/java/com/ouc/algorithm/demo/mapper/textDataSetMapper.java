@@ -15,11 +15,14 @@ public interface textDataSetMapper {
     @Select("SELECT dataSetName FROM webAlgorithm.textDataSet WHERE dataSetCatalog=#{dataSetType}")
     List<String> getDataSetType(@Param("dataSetType") String dataSetType);
 
+    @Select("SELECT dataSetName FROM webAlgorithm.textDataSet WHERE id=#{id}")
+    String getADataSetName(@Param("id") int id);
+
     @Insert("INSERT IGNORE into webAlgorithm.textDataSet(dataSetName, dataSetCatalog, dataSetDescription, dataSetPath, createTime) " +
             "VALUES (#{textdataSet.dataSetName}, #{textdataSet.dataSetCatalog},#{textdataSet.dataSetDescription},#{textdataSet.dataSetPath}" +
             ",#{textdataSet.createTime})")
     int createATask(@Param("textdataSet") textDataSet textdataSet);
 
     @Delete("DELETE FROM webAlgorithm.textDataSet WHERE id = #{id}")
-    void deleteDataSet(@Param("id") int id);
+    int deleteDataSet(@Param("id") int id);
 }
