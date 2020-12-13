@@ -2,11 +2,14 @@ package com.ouc.algorithm.demo.controller;
 
 import com.ouc.algorithm.demo.entity.TaskManagement;
 import com.ouc.algorithm.demo.mapper.TaskManagementMapper;
+import com.ouc.algorithm.demo.mapper.modelBuildRecordMapper;
+import com.ouc.algorithm.demo.mapper.modelConfigMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.*;
 
 @RestController
@@ -19,6 +22,12 @@ public class TaskManagementController {
     //TaskManagement taskManagement;
     @Autowired
     private TaskManagementMapper taskManagementMapper;
+
+    @Autowired
+    private modelBuildRecordMapper modelbuildRecordMapper;
+
+    @Autowired
+    private modelConfigMapper modelconfigMapper;
 
     @RequestMapping(value = "/insert", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
     @ResponseBody
@@ -50,6 +59,34 @@ public class TaskManagementController {
         Map<String,String> res = new HashMap<>();
         res.put("state","delete success");
         return res;
+    }
+
+    @RequestMapping(value = "/deleteallrecord", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String,String> deleteAllRecord(@RequestBody Map<String, String> requestParams){
+        Map<String,String> responseMap = new HashMap<>();
+        String uuid = requestParams.get("taskUid");
+        String modelConfigUid = modelbuildRecordMapper.getAModelConfigId(uuid);
+        String modelSaveName = modelbuildRecordMapper.getAModelSaveName(uuid);
+        if(modelConfigUid==null){
+            taskManagementMapper.deleteTask(uuid);
+            responseMap.put("code", "201");
+            responseMap.put("message","任务没有建模信息，已将任务信息删除");
+            return responseMap;
+        }
+        File file = new File("/home/jiajie/test/data/models/"+modelSaveName);
+        if(file.exists()) {
+            modelbuildRecordMapper.deleteModel(uuid);
+            modelconfigMapper.deleteModelConfig(modelConfigUid);
+            taskManagementMapper.deleteTask(uuid);
+            file.delete();
+            responseMap.put("code", "200");
+            responseMap.put("message","删除完成");
+        }else {
+            responseMap.put("code", "202");
+            responseMap.put("message","未找到模型文件，可能模型在构建中，删除失败");
+        }
+        return responseMap;
     }
 
 

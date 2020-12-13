@@ -13,6 +13,12 @@ public interface modelBuildRecordMapper {
     @Select("SELECT * FROM webAlgorithm.modelBuildRecord")
     List<ModelBuildRecord> getAllModelRecord();
 
+    @Select("SELECT modelConfId FROM webAlgorithm.modelBuildRecord WHERE modelUid=#{modelUid}")
+    String getAModelConfigId(@Param("modelUid") String modelUid);
+
+    @Select("SELECT saveModelName FROM webAlgorithm.modelBuildRecord WHERE modelUid=#{modelUid}")
+    String getAModelSaveName(@Param("modelUid") String modelUid);
+
     @Select("SELECT * FROM webAlgorithm.modelBuildRecord WHERE modelUid=#{modelUid}")
     ModelBuildRecord getAModelRecord(@Param("modelUid") String modelUid);
 
@@ -27,7 +33,7 @@ public interface modelBuildRecordMapper {
     @Update("UPDATE webAlgorithm.modelBuildRecord SET buildingProcess=#{buildingProcess} WHERE modelUid=#{modelUid}")
     void updateProcess(@Param("buildingProcess") Float buildingProcess, @Param("modelUid")String modelUid);
 
-    @Delete("DELETE FROM webAlgorithm.ModelBuildRecord WHERE modelUid = #{modelUid}")
+    @Delete("DELETE FROM webAlgorithm.modelBuildRecord WHERE modelUid = #{modelUid}")
     void deleteModel(@Param("modelUid") String modelUid);
 
 
