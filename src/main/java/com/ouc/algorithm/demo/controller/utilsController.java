@@ -1,4 +1,5 @@
 package com.ouc.algorithm.demo.controller;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -95,5 +96,35 @@ public class utilsController {
             return "上传文件失败";
         }
         return "完成上传";
+    }
+
+    @GetMapping("/uploadpredict")
+    public String uploadPredict() {
+        return "请用post上传文件";
+    }
+
+    @PostMapping("/uploadpredict")
+    @ResponseBody
+    public String uploadPredict(@RequestParam("file") MultipartFile file, HttpServletRequest request,
+                                @RequestParam("datasetname") String dataSetName) throws IOException {
+        JSONObject responseJson = new JSONObject();
+        String path = "/home/jiajie/test/data/predictDataSet/"+dataSetName;
+        File fileName=new File(path);
+        if(fileName.exists()){
+            return "错误！数据集已存在";
+        }
+        File dest = new File(path);
+        try {
+            file.transferTo(dest);
+            responseJson.put("code",200);
+            responseJson.put("message","文件上传成功");
+            LOGGER.info("文件上传成功");
+        } catch (IOException e) {
+            LOGGER.error(e.toString(), e);
+            responseJson.put("code",500);
+            responseJson.put("message","文件上传失败");
+            return responseJson.toJSONString();
+        }
+        return responseJson.toJSONString();
     }
 }
