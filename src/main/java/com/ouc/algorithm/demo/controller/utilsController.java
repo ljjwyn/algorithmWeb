@@ -105,17 +105,28 @@ public class utilsController {
 
     @PostMapping("/uploadpredict")
     @ResponseBody
-    public String uploadPredict(@RequestParam("file") MultipartFile file, HttpServletRequest request,
+    public String uploadPredict(HttpServletRequest request,
                                 @RequestParam("datasetname") String dataSetName) throws IOException {
         JSONObject responseJson = new JSONObject();
-        String path = "/home/jiajie/test/data/predictDataSet/"+dataSetName;
+        //TODO mac与服务器上注意转化上传文件路
+        //String path = "/home/jiajie/test/data/predictDataSet/"+dataSetName;
+        String path = "/Users/ljjwyn/dataSet/"+dataSetName;
+        if (dataSetName.isEmpty()) {
+            responseJson.put("code",401);
+            responseJson.put("message","数据集名称为空");
+            return responseJson.toJSONString();
+        }
         File fileName=new File(path);
         if(fileName.exists()){
-            return "错误！数据集已存在";
+            responseJson.put("code",402);
+            responseJson.put("message","数据集存在");
+            return responseJson.toJSONString();
         }
         File dest = new File(path);
+        List<MultipartFile> files = ((MultipartHttpServletRequest) request).getFiles("files");
         try {
-            file.transferTo(dest);
+            // 这里将文件上传个数限定在1个，所以取的index=0
+            files.get(0).transferTo(dest);
             responseJson.put("code",200);
             responseJson.put("message","文件上传成功");
             LOGGER.info("文件上传成功");
