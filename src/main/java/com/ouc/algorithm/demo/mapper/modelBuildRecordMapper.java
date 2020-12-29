@@ -19,6 +19,9 @@ public interface modelBuildRecordMapper {
     @Select("SELECT saveModelName FROM webAlgorithm.modelBuildRecord WHERE modelUid=#{modelUid}")
     String getAModelSaveName(@Param("modelUid") String modelUid);
 
+    @Select("SELECT * FROM webAlgorithm.modelBuildRecord WHERE basicModelId=#{basicModelId}")
+    List<ModelBuildRecord> getSaveModelName(@Param("basicModelId") String basicModelName);
+
     @Select("SELECT * FROM webAlgorithm.modelBuildRecord WHERE modelUid=#{modelUid}")
     ModelBuildRecord getAModelRecord(@Param("modelUid") String modelUid);
 

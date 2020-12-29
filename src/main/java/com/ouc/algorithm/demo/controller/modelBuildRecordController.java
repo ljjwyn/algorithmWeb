@@ -103,6 +103,21 @@ public class modelBuildRecordController {
     }
 
 
+    @RequestMapping(value = "/getsavemodelname", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
+    @ResponseBody
+    public String getSaveModelName(@RequestBody Map<String, String> requestParam){
+        JSONObject responseJson = new JSONObject();
+        String basicModelId = requestParam.get("modelBasicId");
+        if (!basicModelId.isEmpty()){
+            List<ModelBuildRecord> modelBuildRecordList = modelbuildRecordMapper.getSaveModelName(basicModelId);
+            responseJson.put("code",200);
+            responseJson.put("modelBuildRecordList",modelBuildRecordList);
+        }else {
+            responseJson.put("code",500);
+            responseJson.put("message","模型基本id为空");
+        }
+        return responseJson.toJSONString();
+    }
 
 
     /**
@@ -118,6 +133,23 @@ public class modelBuildRecordController {
         res.put("code",20000);
         res.put("data",modelbuildRecord);
         return res;
+    }
+
+    @RequestMapping(value = "/getmodelrecord", produces = {"application/json;charset=UTF-8"}, method = RequestMethod.POST)
+    @ResponseBody
+    public String getModelRecordByUid(@RequestBody Map<String,String> requestParam){
+        JSONObject responseJson = new JSONObject();
+        String modelUid = requestParam.get("modelUid");
+        ModelBuildRecord modelBuildRecord = modelbuildRecordMapper.getAModelRecord(modelUid);
+        if(modelBuildRecord==null){
+            responseJson.put("code",201);
+            responseJson.put("message","查询不到对应的创建模型");
+        }else {
+            responseJson.put("code",200);
+            responseJson.put("modelBuildRecord",modelBuildRecord);
+        }
+        return responseJson.toJSONString();
+
     }
 
     public ModelBuildRecord confParams(Map<String,Object> par){
