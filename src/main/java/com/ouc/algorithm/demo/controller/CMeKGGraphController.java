@@ -17,7 +17,7 @@ public class CMeKGGraphController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     @ResponseBody
-    public HashMap searchGraphData(@RequestBody Map<String,String> requestParam){
+    public HashMap searchGraphData(@RequestBody Map<String, String> requestParam) {
         String keyWords = requestParam.get("keyWords");
         return medicalGraphSearch.loadCMeKGDB(keyWords);
     }

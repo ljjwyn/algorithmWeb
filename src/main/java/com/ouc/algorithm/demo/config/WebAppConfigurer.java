@@ -1,4 +1,5 @@
 package com.ouc.algorithm.demo.config;
+
 import com.ouc.algorithm.demo.interceptors.LoginInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,10 +30,8 @@ public class WebAppConfigurer implements WebMvcConfigurer {
 
 
         // 拦截配置
-        addInterceptor.excludePathPatterns("/login**","/user/info**","/menus**");
+        addInterceptor.excludePathPatterns("/login**", "/user/info**", "/menus**");
     }
-
-
 
 
 }

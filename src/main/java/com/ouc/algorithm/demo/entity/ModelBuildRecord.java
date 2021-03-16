@@ -94,6 +94,7 @@ public class ModelBuildRecord {
     public void setModelConfId(String modelConfId) {
         this.modelConfId = modelConfId;
     }
+
     public void setModelUid(String modelUid) {
         this.modelUid = modelUid;
     }

@@ -11,11 +11,11 @@ public class TaskManagement {
     private Date endDate;
     private String databaseName;
 
-    public String getDatabaseName(){
+    public String getDatabaseName() {
         return databaseName;
     }
 
-    public String getTaskName(){
+    public String getTaskName() {
         return taskName;
     }
 
@@ -59,7 +59,11 @@ public class TaskManagement {
         Uid = uid;
     }
 
-    public void setTaskName(String taskName){this.taskName = taskName;}
+    public void setTaskName(String taskName) {
+        this.taskName = taskName;
+    }
 
-    public void setDatabaseName(String databaseName){this.databaseName=databaseName;}
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
 }

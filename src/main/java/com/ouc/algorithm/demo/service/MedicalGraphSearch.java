@@ -16,11 +16,11 @@ public class MedicalGraphSearch {
 
     private final String CMeKGURL = "https://zstp.pcl.ac.cn:8002/get3dData?name=";
 
-    public HashMap loadCMeKGDB(String keyWords){
-        return JSON.parseObject(callAPI(CMeKGURL+keyWords), HashMap.class);
+    public HashMap loadCMeKGDB(String keyWords) {
+        return JSON.parseObject(callAPI(CMeKGURL + keyWords), HashMap.class);
     }
 
-    public String callAPI(String methodUrl){
+    public String callAPI(String methodUrl) {
         HttpURLConnection connection = null;
         BufferedReader reader = null;
         String line;

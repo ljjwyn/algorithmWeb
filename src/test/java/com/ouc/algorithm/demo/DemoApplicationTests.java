@@ -30,13 +30,13 @@ class DemoApplicationTests {
     }
 
     @Test
-    void testGraphAPI(){
+    void testGraphAPI() {
         HashMap a = medicalGraphSearch.loadCMeKGDB("胰腺癌");
         System.out.println(1);
     }
 
     @Test
-    void testPredictDataSet(){
+    void testPredictDataSet() {
         Date nowTime = new Date();
         PredictDataSet predictDataSet = new PredictDataSet();
         predictDataSet.setTaskUid("ceshi");
@@ -49,7 +49,7 @@ class DemoApplicationTests {
     }
 
     @Test
-    void testSelectPredictDataSet(){
+    void testSelectPredictDataSet() {
         List<PredictDataSet> predictDataSetList = predictDataSetMapper.getAllPredictDataSet();
         System.out.println(1);
     }

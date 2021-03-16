@@ -10,13 +10,13 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Service
-public class RedisServiceImpl implements RedisService{
+public class RedisServiceImpl implements RedisService {
 
     private static final Logger log = LoggerFactory.getLogger(RedisServiceImpl.class);
 
     final ReentrantLock lock = new ReentrantLock();
 
-    final String VISITS_COUNT_KEY="visits_count";
+    final String VISITS_COUNT_KEY = "visits_count";
 
     @Autowired
     JedisUtil jedisUtil;

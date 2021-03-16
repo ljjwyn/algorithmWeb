@@ -20,25 +20,26 @@ public class LoginInterceptor implements HandlerInterceptor {
 
 
     //这个方法是在访问接口之前执行的，我们只需要在这里写验证登陆状态的业务逻辑，就可以在用户调用指定接口之前验证登陆状态了
+    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         //每一个项目对于登陆的实现逻辑都有所区别，我这里使用最简单的Session提取User来验证登陆。
         HttpSession session = request.getSession();
         Cookie[] test2 = request.getCookies();
-        if(test2==null){
+        if (test2 == null) {
             log.warn("未获取到cookie");
-        }else {
+        } else {
             log.warn("有cookie");
         }
         // 由于xhr在post等跨域情况下需要用options请求试探，
         // 如果不放行会拦截正常请求，这里很重要
-        if(request.getMethod().equals("OPTIONS")){
+        if (request.getMethod().equals("OPTIONS")) {
             return true;
-        }else if(request.getMethod().equals("POST")){
+        } else if (request.getMethod().equals("POST")) {
             log.info("post");
         }
         System.out.println("拦截器中的session的id是====" + session.getId());
-        if (session.getAttribute("user") != null){
-            log.info("用户已登录，登录的用户是{}",session.getAttribute("user"));
+        if (session.getAttribute("user") != null) {
+            log.info("用户已登录，登录的用户是{}", session.getAttribute("user"));
             return true;
         }
         // session过期了
@@ -52,9 +53,11 @@ public class LoginInterceptor implements HandlerInterceptor {
         return true;
     }
 
+    @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable ModelAndView modelAndView) throws Exception {
     }
 
+    @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, @Nullable Exception ex) throws Exception {
     }
 }

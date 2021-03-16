@@ -1,4 +1,5 @@
 package com.ouc.algorithm.demo.mapper;
+
 import com.ouc.algorithm.demo.entity.modelConfig;
 import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public interface modelConfigMapper {
     List<modelConfig> getAllModelConfig();
 
     @Update("UPDATE webAlgorithm.modelConfig SET dataSetName=#{dataSetName},modelConfMap=#{modelConfMap} WHERE uid=#{confId}")
-    void updateDataSetName(@Param("dataSetName")String dataSetName, @Param("modelConfMap")String modelConfMap, @Param("confId")String confId);
+    void updateDataSetName(@Param("dataSetName") String dataSetName, @Param("modelConfMap") String modelConfMap, @Param("confId") String confId);
 
     @Delete("DELETE FROM webAlgorithm.modelConfig WHERE uid = #{uid}")
     void deleteModelConfig(@Param("uid") String uid);

@@ -16,7 +16,7 @@ public class DemoApplication {
     }
 
     @Bean
-    public JedisPool jedisPool(){
+    public JedisPool jedisPool() {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(8);
         jedisPoolConfig.setMaxWaitMillis(10);

@@ -70,7 +70,7 @@ public class JedisUtil {
     /**
      * 删除key @param key @return
      */
-    public Long del(String key){
+    public Long del(String key) {
         Jedis jedis = null;
         try {
             jedis = getJedis();

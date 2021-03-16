@@ -20,18 +20,19 @@ public class DashboardController {
     @Autowired
     RedisServiceImpl redisService;
 
-    @RequestMapping(value = "/visitorcount",method = RequestMethod.GET)
+    @RequestMapping(value = "/visitorcount", method = RequestMethod.GET)
     @ResponseBody
-    public Map<String,Object> getVisitorCount(){
-        Map<String,Object> responseMap = new HashMap<>();
-        redisService.visitsCountPlusOne();
-        String visitorCount = redisService.totalVisitsCount();
-        if(visitorCount==null){
-            responseMap.put("code",500);
-            responseMap.put("message","获取访问量错误");
-        }else {
-            responseMap.put("code",200);
-            responseMap.put("visitorCount",visitorCount);
+    public Map<String, Object> getVisitorCount() {
+        Map<String, Object> responseMap = new HashMap<>();
+//        redisService.visitsCountPlusOne();
+//        String visitorCount = redisService.totalVisitsCount();
+        String visitorCount = "1234";
+        if (visitorCount == null) {
+            responseMap.put("code", 500);
+            responseMap.put("message", "获取访问量错误");
+        } else {
+            responseMap.put("code", 200);
+            responseMap.put("visitorCount", visitorCount);
         }
         return responseMap;
     }
